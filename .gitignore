@@ -1,0 +1,14 @@
+/target/
+**/*.rs.bk
+
+*~
+*.swp
+*.swo
+.*.sw?
+.idea/
+.vscode/
+
+*.log
+*.tmp
+
+.env
