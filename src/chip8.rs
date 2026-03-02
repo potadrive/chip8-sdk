@@ -1,28 +1,31 @@
 use crate::display::Display;
+use minifb::Key;
+use std::fs;
+use std::process;
 
 #[derive(Debug)]
-struct Chip8 {
-    v: [u8; 16],
-    i: usize,
-    pc: usize,
+pub struct Chip8 {
+    pub v: [u8; 16],
+    pub i: usize,
+    pub pc: usize,
     sp: usize,
-    dt: u8,
-    st: u8,
+    pub dt: u8,
+    pub st: u8,
     
     // RAM
     mem: [u8; 4096],
     stack: [u16; 16],
 
-    display: Display,
+    pub display: Display,
 
-    keyboard: [bool; 16],
+    pub keyboard: [bool; 16],
 }
 
 impl Chip8 {
-    const TARGET_FPS: u16 = 60;
-    const IPS: u16 = 1200;
+    pub const TARGET_FPS: u16 = 60;
+    pub const IPS: u16 = 1200;
 
-    const SYSFONT: [u8; 80] = [
+    pub const SYSFONT: [u8; 80] = [
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
         0x20, 0x60, 0x20, 0x20, 0x70, // 1
         0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -42,14 +45,14 @@ impl Chip8 {
     ];
     const SYSFONT_START_ADDR: usize = 0x0000;
 
-    const KEYBOARD_LAYOUT: [Key; 16] = [
+    pub const KEYBOARD_LAYOUT: [Key; 16] = [
         Key::X,     Key::Key1,  Key::Key2,  Key::Key3,
         Key::Q,     Key::W,     Key::E,     Key::A,
         Key::S,     Key::D,     Key::Z,     Key::C,
         Key::Key4,  Key::R,     Key::F,     Key::V,
     ];
 
-    fn new() -> Self {
+    pub fn new() -> Self {
         Self {
             v: [0; 16],
             i: 0,
@@ -64,11 +67,11 @@ impl Chip8 {
         }
     }
 
-    fn load_fontset(&mut self, fontset: &[u8]) {
+    pub fn load_fontset(&mut self, fontset: &[u8]) {
         self.mem[Self::SYSFONT_START_ADDR..Self::SYSFONT_START_ADDR + Self::SYSFONT.len()].copy_from_slice(fontset);
     }
 
-    fn load_program(&mut self, path: &str) {
+    pub fn load_program(&mut self, path: &str) {
         let rom: Vec<u8> = fs::read(path).unwrap_or_else(|_| {
             eprintln!("По данному пути байт код не найден!");
             process::exit(0);
@@ -76,12 +79,12 @@ impl Chip8 {
         self.mem[self.pc..self.pc + rom.len()].copy_from_slice(&rom);
     }
 
-    fn update_timers(&mut self) {
+    pub fn update_timers(&mut self) {
         self.dt = self.dt.saturating_sub(1);
         self.st = self.st.saturating_sub(1);
     }
 
-    fn do_instruction_cycle(&mut self) {
+    pub fn do_instruction_cycle(&mut self) {
         // fetch
         let hi = self.mem[self.pc] as u16;
         let lo = self.mem[self.pc + 1] as u16;

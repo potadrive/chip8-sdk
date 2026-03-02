@@ -1,13 +1,14 @@
-struct Display {
-    width: usize,
-    height: usize,
-    buffer: Vec<u32>,
-    bg_color: u32,
-    fg_color: u32,
+#[derive(Debug)]
+pub struct Display {
+    pub width: usize,
+    pub height: usize,
+    pub buffer: Vec<u32>,
+    pub bg_color: u32,
+    pub fg_color: u32,
 }
 
 impl Display {
-    fn new(width: usize, height: usize, bg_color: u32, fg_color: u32) -> Self {
+    pub fn new(width: usize, height: usize, bg_color: u32, fg_color: u32) -> Self {
         Self {
             width,
             height,
@@ -18,11 +19,11 @@ impl Display {
     }
 
     #[inline]
-    fn clear(&mut self) {
+    pub fn clear(&mut self) {
         self.buffer.fill(self.bg_color);
     }
 
-    fn draw_sprite(&mut self, source: &[u8], x: u8, y: u8, height: u8) -> bool {
+    pub fn draw_sprite(&mut self, source: &[u8], x: u8, y: u8, height: u8) -> bool {
         let mut is_erased = false;
         let px_mask = 0b1000_0000;
 
