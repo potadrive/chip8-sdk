@@ -12,6 +12,8 @@ fn main() {
     chip8.load_fontset(&Chip8::SYSFONT);
     chip8.load_program(&args[1]);
 
+    println!("{:#?}", chip8);
+
     let mut window = Window::new(
         &args[1], 
         chip8.display.width, 

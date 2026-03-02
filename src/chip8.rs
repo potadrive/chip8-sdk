@@ -1,5 +1,6 @@
 use crate::display::Display;
 
+#[derive(Debug)]
 struct Chip8 {
     v: [u8; 16],
     i: usize,
