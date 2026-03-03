@@ -2,6 +2,7 @@ use crate::display::Display;
 use minifb::Key;
 use std::fs;
 use std::process;
+use log::trace;
 
 #[derive(Debug)]
 pub struct Chip8 {
@@ -89,6 +90,7 @@ impl Chip8 {
         let hi = self.mem[self.pc] as u16;
         let lo = self.mem[self.pc + 1] as u16;
         let opcode = hi << 8 | lo;
+        trace!("Executing opcode: {:#06X} at PC={:#04X}", opcode, self.pc);
         self.pc += 2;
 
         // Decode & Execute

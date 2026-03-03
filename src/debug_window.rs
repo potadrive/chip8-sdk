@@ -8,20 +8,25 @@ pub struct DebugWindow {
 
 impl DebugWindow {
     pub fn new(chip8: &Chip8) -> Option<Self> {
-        let width = 1100;
-        let height = 320;
+        let width = 800;
+        let height = 200;
         let bg_color = chip8.display.bg_color;
-        let window = Window::new(
+        match Window::new(
             "Chip8 Debug Info",
             width,
             height,
             WindowOptions {
-                resize: false,      
+                resize: true,
                 scale: Scale::X1,
                 ..WindowOptions::default()
             },
-        ).ok()?;
-        Some(Self { window, bg_color })
+        ) {
+            Ok(window) => Some(Self { window, bg_color }),
+            Err(e) => {
+                eprintln!("Failed to create debug window: {}", e);
+                None
+            }
+        }
     }
 
     pub fn is_open(&self) -> bool {
@@ -29,7 +34,7 @@ impl DebugWindow {
     }
 
     pub fn update(&mut self, chip8: &Chip8) -> bool {
-	if self.window.is_key_down(Key::F1) {
+	    if self.window.is_key_down(Key::F1) {
             return true;
         }
 
@@ -37,7 +42,9 @@ impl DebugWindow {
         
         let buffer = vec![self.bg_color; width * height];
         
-        self.window.update_with_buffer(&buffer, width, height).unwrap();
+        if let Err(e) = self.window.update_with_buffer(&buffer, width, height) {
+            eprintln!("Debug window update error: {}", e);
+        }
         
         self.window.set_title(&format!(
             "PC={:03X} I={:03X} DT={} ST={} | V0={:02X} V1={:02X} V2={:02X} V3={:02X} V4={:02X} V5={:02X} V6={:02X} V7={:02X} V8={:02X} V9={:02X} VA={:02X} VB={:02X} VC={:02X} VD={:02X} VE={:02X} VF={:02X}",

@@ -5,8 +5,10 @@ mod debug_window;
 use std::{env, thread, time::{Duration, Instant}, hint};
 use minifb::{Window, WindowOptions, Scale, Key};
 use chip8::Chip8;
+use log::debug;
 
 fn main() {
+    env_logger::init();
     let args: Vec<String> = env::args().collect();
 
     let mut chip8 = Chip8::new();
@@ -49,6 +51,7 @@ fn main() {
                 chip8.keyboard[i] = window.is_key_down(*key);
 		let f1_pressed = window.is_key_down(Key::F1);
 		if f1_pressed && !f1_was_pressed && debug_window.is_none() {
+            debug!("Opening debug window");
 		    debug_window = debug_window::DebugWindow::new(&chip8);
 		}
 		f1_was_pressed = f1_pressed;
@@ -58,9 +61,11 @@ fn main() {
 
 	if let Some(ref mut dw) = debug_window {
 	    if !dw.is_open() {
-		debug_window = None; // закрыто мышью
+            debug!("Debug window closed by user");
+            debug_window = None;
 	    } else if dw.update(&chip8) {
-		debug_window = None; // закрыто по F1
+            debug!("Debug window closed by F1");
+            debug_window = None;
 	    }
 	}
 
